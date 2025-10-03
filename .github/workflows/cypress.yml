@@ -1,5 +1,6 @@
 name: Cypress Tests
-on: [push]
+on: 
+  workflow_dispatch: #para não precisar de psuh, para rodar o teste
 jobs:
   tests:
     runs-on: ubuntu-latest
