@@ -5,7 +5,7 @@ on: # [push] # para rodar os testes com o push
       spec:
          default: cypress/e2e/*
 jobs:
-  tests:
+  chrome-tests:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-22.20.0-chrome-140.0.7339.207-1-ff-143.0.1-edge-140.0.3485.81-1 # adicionar as versões para os browsers
@@ -19,8 +19,7 @@ jobs:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v4      
       - name: Run e2e tests
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
@@ -30,6 +29,43 @@ jobs:
           install-command: npm install
           wait-on: 'https://petlov.vercel.app' # Waits for above
           browser: chrome
+          group: Chrome
+          # Records to Cypress Cloud 
+          # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
+          record: true
+          parallel: true # Runs test in parallel using settings above
+          spec: ${{ github.event.inputs.spec }} # permite deixar escolher se quer rodar todos os casos de teste ou escolher apenas um, para isso tem que adicionar o que tem na linha 4,5 e 6
+        env:
+          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
+          # in GitHub repo → Settings → Secrets → Actions
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  firefox-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node-22.20.0-chrome-140.0.7339.207-1-ff-143.0.1-edge-140.0.3485.81-1 # adicionar as versões para os browsers
+      options: --user 1001 # parametro para subir a imagem do browser como adminitrador
+    # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
+    # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    # Also see warning here https://github.com/cypress-io/github-action#parallel
+    strategy:
+      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      matrix:
+        containers: [1, 2] # Uses 2 parallel instances
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4      
+      - name: Run e2e tests
+        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v6
+        with:
+          # Starts web server for E2E tests - replace with your own server invocation
+          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
+          install-command: npm install
+          wait-on: 'https://petlov.vercel.app' # Waits for above
+          browser: firefox
+          group: Firefox
           # Records to Cypress Cloud 
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
