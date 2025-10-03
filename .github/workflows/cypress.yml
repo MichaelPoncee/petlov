@@ -8,7 +8,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-22.20.0-chrome-140.0.7339.207-1-ff-143.0.1-edge-140.0.3485.81-1
+      image: cypress/browsers:node-22.20.0-chrome-140.0.7339.207-1-ff-143.0.1-edge-140.0.3485.81-1 # adicionar as versões para os browsers
       options: --user 1001 # parametro para subir a imagem do browser como adminitrador
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
@@ -34,7 +34,7 @@ jobs:
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
           parallel: true # Runs test in parallel using settings above
-          spec: $ {{ github.event.inputs.spec }} # permite deixar escolher se quer rodar todos os casos de teste ou escolher apenas um, para isso tem que adicionar o que tem na linha 4,5 e 6
+          spec: ${{ github.event.inputs.spec }} # permite deixar escolher se quer rodar todos os casos de teste ou escolher apenas um, para isso tem que adicionar o que tem na linha 4,5 e 6
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
