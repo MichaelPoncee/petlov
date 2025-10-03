@@ -3,6 +3,9 @@ on: [push]
 jobs:
   tests:
     runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node-22.20.0-chrome-140.0.7339.207-1-ff-143.0.1-edge-140.0.3485.81-1
+      options: --user 1001 # parametro para subir a imagem do browser como adminitrador
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
     # Also see warning here https://github.com/cypress-io/github-action#parallel
@@ -22,6 +25,7 @@ jobs:
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           install-command: npm install
           wait-on: 'https://petlov.vercel.app' # Waits for above
+          browser: chrome
           # Records to Cypress Cloud 
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
