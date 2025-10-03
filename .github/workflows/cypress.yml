@@ -1,6 +1,9 @@
 name: Cypress Tests
 on: # [push] # para rodar os testes com o push
   workflow_dispatch: #para não precisar de push, para rodar o teste
+    inputs:
+      spec:
+         default: cypress/e2e/*
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -31,6 +34,7 @@ jobs:
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
           parallel: true # Runs test in parallel using settings above
+          spec: $ {{ github.event.inputs.spec }} # permite deixar escolher se quer rodar todos os casos de teste ou escolher apenas um, para isso tem que adicionar o que tem na linha 4,5 e 6
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
